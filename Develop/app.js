@@ -8,7 +8,7 @@ const fs = require("fs");
 const htmlRenderer = require('./lib/htmlRenderer')
 
 const employeeList = []
-const addEmployee = 
+
 
 start();
 
@@ -71,60 +71,66 @@ function addEngineer() {
 
         addEmployee()
     });
+}
 
-    function addIntern() {
-        inquirer.prompt([
-            {
-                name: "name",
-                type: "input",
-                message: "Intern's name?"
-            },
-            {
-                name: "id",
-                type: "input",
-                message: "Intern's id?"
-            },
-            {
-                name: "email",
-                type: "input",
-                message: "Intern's email?"
-            },
-            {
-                name: "school",
-                type: "input",
-                message: "Inter's school?"
-            },
-        ]).then(({ name, id, email, school }) => {
-            var emp = new Intern(name, id, email, school)
-            employeeList.push(emp)
-            console.log(employeeList)
+function addIntern() {
+    inquirer.prompt([
+        {
+            name: "name",
+            type: "input",
+            message: "Intern's name?"
+        },
+        {
+            name: "id",
+            type: "input",
+            message: "Intern's id?"
+        },
+        {
+            name: "email",
+            type: "input",
+            message: "Intern's email?"
+        },
+        {
+            name: "school",
+            type: "input",
+            message: "Inter's school?"
+        },
+    ]).then(({ name, id, email, school }) => {
+        var emp = new Intern(name, id, email, school)
+        employeeList.push(emp)
+        console.log(employeeList)
 
-            addEmployee()
+        addEmployee()
+    })
+}
+
+function addEmployee() {
+    inquirer.prompt({
+        name: "choice",
+        type: "list",
+        message: "What employee would you like to add?",
+        choices: ["Engineer", "Intern", "Exit"]
+    })
+        .then(({ choice }) => {
+            console.log(choice)
+            if (choice === "Exit") {
+                var html = htmlRenderer(employeeList)
+                console.log(html);
+                fs.writeFile("./output/Team.html", html, error =>{
+                    if (error){
+                        throw error;
+                    }
+                });
+            }
+            else if (choice === "Engineer") {
+                addEngineer()
+                // Build function for gettin information about engineer
+                // then ask whether they would like to add more employees
+            }
+            else if (choice === "Intern") {
+                // Build function for gettin information about intern
+                // then ask whether they would like to add more employees
+                addIntern()
+            }
         })
-    }
-
-    function addEmployee() {
-        inquirer.prompt({
-            name: "choice",
-            type: "list",
-            message: "What employee would you like to add?",
-            choices: ["Engineer", "Intern", "Exit"]
-        })
-            .then(({ choice }) => {
-                console.log(choice)
-                if (choice === "Exit") {
-                    var html = htmlRenderer(employeeList)
-                    console.log(html)
-                }
-                else if (choice === "Engineer") {
-                    addEngineer()
-                    // Build function for gettin information about engineer
-                    // then ask whether they would like to add more employees
-                }
-                else if (choice === "Intern") {
-                    // Build function for gettin information about intern
-                    // then ask whether they would like to add more employees
-                    addIntern()
-                }
-            })
-    }}
+}
